@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+//
 type Box = { name: string; gridArea: string }
 
 type Item = { name: string; color: string }
@@ -56,6 +57,21 @@ const getContrast = (hexcolor: string) => {
 
 const buttonColor = getRandomColor()
 
+const boxes: Box[] = [
+  { name: 'Color List 1', gridArea: 'leftTop' },
+  { name: 'Color List 2', gridArea: 'leftBottom' },
+  { name: 'Selected Colors', gridArea: 'right' },
+]
+
+const numberOfItems = 4
+
+const getListItems = (): Item[] => {
+  return new Array(numberOfItems).fill(null).map((i) => ({
+    color: getRandomColor(),
+    name: 'click',
+  }))
+}
+
 const useSelectedItems = (initialSelectedItems: Item[] = []) => {
   const [selectedItems, setSelectedItems] = useState<Item[]>(
     initialSelectedItems,
@@ -79,13 +95,28 @@ const useSelectedItems = (initialSelectedItems: Item[] = []) => {
   return { selectedItems, addSelectedItem, removeSelectedItem }
 }
 
-const boxes: Box[] = [
-  { name: 'Color List 1', gridArea: 'leftTop' },
-  { name: 'Color List 2', gridArea: 'leftBottom' },
-  { name: 'Selected Colors', gridArea: 'right' },
-]
+const Layout: React.FC = ({ children }) => {
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        width: '100vw',
+        backgroundColor: '#fff',
+        display: 'grid',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      {children}
+    </div>
+  )
+}
 
 const App = () => {
+  const [listOneItems, _setListOneItems] = useState<Item[]>(getListItems())
+
+  const [listTwoItems, _setListTwoItems] = useState<Item[]>(getListItems())
+
   const {
     selectedItems,
     addSelectedItem,
@@ -111,21 +142,21 @@ const App = () => {
       >
         <List
           box={boxes[0]}
-          listItems={[]}
-          onItemClick={() => {}}
-          buttonLabel=""
+          listItems={listOneItems}
+          onItemClick={addSelectedItem}
+          buttonLabel="add"
         />
         <List
           box={boxes[1]}
-          listItems={[]}
-          onItemClick={() => {}}
-          buttonLabel=""
+          listItems={listTwoItems}
+          onItemClick={addSelectedItem}
+          buttonLabel="add"
         />
         <List
           box={boxes[2]}
-          listItems={[]}
-          onItemClick={() => {}}
-          buttonLabel=""
+          listItems={selectedItems}
+          onItemClick={removeSelectedItem}
+          buttonLabel="remove"
         />
       </div>
     </Layout>
@@ -133,23 +164,6 @@ const App = () => {
 }
 
 export default App
-
-const Layout: React.FC = ({ children }) => {
-  return (
-    <div
-      style={{
-        minHeight: '100vh',
-        width: '100vw',
-        backgroundColor: '#fff',
-        display: 'grid',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      {children}
-    </div>
-  )
-}
 
 const List = ({
   box,
